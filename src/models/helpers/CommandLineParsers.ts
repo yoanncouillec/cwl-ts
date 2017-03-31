@@ -63,9 +63,22 @@ export class CommandLineParsers {
         const prefix    = input.inputBinding.prefix || "";
         const separator = input.inputBinding.separate !== false ? " " : "";
 
-        return new Promise(res => {
-            res(new CommandLinePart(prefix + separator, cmdType, loc));
+        return Promise.all(Object.keys(value).map((key) => {
+            console.log("key: " + key);
+            
+            let field = input.fields[key];
+            console.log("field: " + JSON.stringify(field));
+            return Object.assign({}, input, {
+                id: key,
+                type: field.type,
+                inputBinding: field.type.typeBinding || {}
+            });
+        }).map((item) => {
+            return CommandLinePrepare.prepare(item, value[item.id], context);
+        })).then((res: CommandLinePart[]) => {
+            return new CommandLinePart(prefix + separator + res.map(part => part.value).join(" "), cmdType, loc);
         });
+
     }
 
     static array(input, job, value, context, cmdType, loc): Promise<CommandLinePart> {
