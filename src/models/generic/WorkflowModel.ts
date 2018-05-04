@@ -1074,7 +1074,7 @@ export abstract class WorkflowModel extends ValidationBase implements Serializab
         return stepOut.concat(this.outputs);
     }
 
-    protected addStepToGraph(step: StepModel, graph: Graph = this.graph) {
+    public addStepToGraph(step: StepModel, graph: Graph = this.graph) {
         this.addVertex(step.id, step, graph);
 
         // Sources don't have information about their destinations,
